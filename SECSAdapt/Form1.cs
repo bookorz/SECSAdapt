@@ -16,15 +16,21 @@ namespace SECSAdapt
     public partial class Form1 : Form,IUserInterfaceReport
     {
         HostControl HostControl;
+        SECSInterface.SECSGEM SECS;
         public Form1()
         {
             InitializeComponent();
-            HostControl = new HostControl(new SECSInterface.SECSGEM(this));
+            
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            SECS = new SECSInterface.SECSGEM(this);
+            HostControl = new HostControl(SECS);
         }
 
         public void NewTask(string Id, TaskFlowManagement.Command TaskName, Dictionary<string, string> param = null)
         {
-            HostControl.NewTask( Id,  TaskName,  param);
+            HostControl.NewTask(Id,  TaskName,  param);
         }
 
         public void On_Alarm_Happen(AlarmInfo Alarm)
@@ -79,7 +85,7 @@ namespace SECSAdapt
 
         public void On_Message_Log(string Type, string Message)
         {
-            
+            UI_Update.UI_Update.ShowLog(Type+":"+ Message);
         }
 
         public void On_Node_Connection_Changed(string NodeName, string Status)
@@ -111,5 +117,7 @@ namespace SECSAdapt
         {
            
         }
+
+        
     }
 }

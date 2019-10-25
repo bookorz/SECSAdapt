@@ -33,22 +33,24 @@ namespace SECSAdapt
 
         public void On_Connection_Connected(object Msg)
         {
-            
+            UI_Update.UI_Update.ChangeState("Control_lb", "Connected");
         }
 
         public void On_Connection_Connecting(string Msg)
         {
-            
+            UI_Update.UI_Update.ChangeState("Control_lb", "Connecting");
         }
 
         public void On_Connection_Disconnected(string Msg)
         {
-           
+            UI_Update.UI_Update.ChangeState("Control_lb", "Disconnected");
+            socket.Start();
         }
 
         public void On_Connection_Error(string Msg)
         {
-            
+            UI_Update.UI_Update.ChangeState("Control_lb", "Error");
+            socket.Start();
         }
 
         public void On_Connection_Message(object Msg)
@@ -58,7 +60,7 @@ namespace SECSAdapt
             //var q = from p in restoredObject.Properties()
             //        where p.Name == "Name"
             //        select p;
-
+            TaskFlowManagement.CurrentProcessTask Task=null;
             switch (restoredObject.Property("Event").Value.ToString())
             {
                 case "SystemConfig":
@@ -67,8 +69,16 @@ namespace SECSAdapt
                     //param.Add("@Target","ROBOT01");
                     //NewTask("123123", TaskFlowManagement.Command.ROBOT_HOME,param);
                     break;
+                case "On_TaskJob_Ack":
+                    Task = JsonConvert.DeserializeObject<TaskFlowManagement.CurrentProcessTask>(restoredObject.Property("Task").Value.ToString());
+                    _Report.On_TaskJob_Ack(Task);
+                    break;
+                case "On_TaskJob_Finished":
+                    Task = JsonConvert.DeserializeObject<TaskFlowManagement.CurrentProcessTask>(restoredObject.Property("Task").Value.ToString());
+                    _Report.On_TaskJob_Finished(Task);
+                    break;
                 case "On_TaskJob_Aborted":
-                    TaskFlowManagement.CurrentProcessTask Task = JsonConvert.DeserializeObject<TaskFlowManagement.CurrentProcessTask>(restoredObject.Property("Task").Value.ToString());
+                    Task = JsonConvert.DeserializeObject<TaskFlowManagement.CurrentProcessTask>(restoredObject.Property("Task").Value.ToString());
                     string NodeName = restoredObject.Property("NodeName").Value.ToString();
                     string ReportType = restoredObject.Property("ReportType").Value.ToString();
                     string Message = restoredObject.Property("Message").Value.ToString();
