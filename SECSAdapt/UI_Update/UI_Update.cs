@@ -29,7 +29,7 @@ namespace SECSAdapt.UI_Update
                 if (W.InvokeRequired)
                 {
                     UpdateLog ph = new UpdateLog(ShowLog);
-                    W.BeginInvoke(ph, text);
+                    W.Invoke(ph, text);
                 }
                 else
                 {

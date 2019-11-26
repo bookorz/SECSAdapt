@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.Control_lb = new System.Windows.Forms.Label();
             this.log_rt = new System.Windows.Forms.RichTextBox();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -61,6 +63,11 @@
             this.log_rt.TabIndex = 2;
             this.log_rt.Text = "";
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -71,7 +78,11 @@
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "SECS Adapt";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -82,6 +93,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label Control_lb;
         private System.Windows.Forms.RichTextBox log_rt;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 
