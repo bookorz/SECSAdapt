@@ -26,7 +26,7 @@ namespace SECSAdapt
         {
             SECS = new SECSInterface.SECSGEM(this);
             HostControl = new HostControl(SECS);
-
+          
             //指定使用的容器
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             //建立NotifyIcon
@@ -44,13 +44,16 @@ namespace SECSAdapt
             this.WindowState = FormWindowState.Normal;
             this.notifyIcon1.Visible = false;
         }
-
+        public Node GetNode(string Name)
+        {
+            return HostControl.GetNode(Name);
+        }
         public void NewTask(string Id, TaskFlowManagement.Command TaskName, Dictionary<string, string> param = null)
         {
             HostControl.NewTask(Id, TaskName, param);
         }
 
-        public void On_Alarm_Happen(AlarmInfo Alarm)
+        public void On_Alarm_Happen(TransferControl.Management.AlarmManagement.AlarmInfo Alarm)
         {
 
         }

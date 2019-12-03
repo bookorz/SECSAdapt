@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TransferControl.CommandConvert;
 using TransferControl.Config;
@@ -13,7 +14,7 @@ using TransferControl.Management;
 
 namespace SECSAdapt
 {
-    public class HostControl: IConnectionReport
+    public class HostControl : IConnectionReport
     {
         IUserInterfaceReport _Report;
         static SocketClient socket;
@@ -24,17 +25,26 @@ namespace SECSAdapt
             socket.Vendor = "BOOK";
             socket.Start();
         }
-
+        bool NodeAvailable = false;
+        Node ReqNode = null;
+        public Node GetNode(string Name)
+        {
+            lock (this)
+            {
+                string Event = "NodeReq";
+                socket.Send(JsonConvert.SerializeObject(new { Event, Name }) + Convert.ToChar(3));
+                SpinWait.SpinUntil(() => NodeAvailable, 5000);
+                NodeAvailable = false;
+                return ReqNode;
+            }
+        }
         public void NewTask(string Id, TaskFlowManagement.Command TaskName, Dictionary<string, string> param = null)
         {
             string Event = "NewTask";
-
             socket.Send(JsonConvert.SerializeObject(new { Event, Id, TaskName, param }) + Convert.ToChar(3));
-
-
         }
 
-        public void MessageLog(string Type,string Message)
+        public void MessageLog(string Type, string Message)
         {
             string Event = "MessageLog";
 
@@ -79,6 +89,10 @@ namespace SECSAdapt
                 Transaction Txn = null;
                 switch (restoredObject.Property("Event").Value.ToString())
                 {
+                    case "NodeReq":
+                        ReqNode = JsonConvert.DeserializeObject<Node>(restoredObject.Property("Node").Value.ToString());
+                        NodeAvailable = true;
+                        break;
                     case "SystemConfig":
                         SystemConfig SysCfg = JsonConvert.DeserializeObject<SystemConfig>(restoredObject.Property("SystemConfig").Value.ToString());
                         //Dictionary<string, string> param = new Dictionary<string, string>();
@@ -101,7 +115,7 @@ namespace SECSAdapt
                         _Report.On_TaskJob_Aborted(Task, NodeName, ReportType, Message);
                         break;
                     case "On_Alarm_Happend":
-                        AlarmInfo Alarm = JsonConvert.DeserializeObject<AlarmInfo>(restoredObject.Property("Alarm").Value.ToString());
+                        TransferControl.Management.AlarmManagement.AlarmInfo Alarm = JsonConvert.DeserializeObject<TransferControl.Management.AlarmManagement.AlarmInfo>(restoredObject.Property("Alarm").Value.ToString());
                         _Report.On_Alarm_Happen(Alarm);
                         break;
                     case "On_Event_Trigger":
@@ -122,9 +136,10 @@ namespace SECSAdapt
                         _Report.On_Command_Finished(Node, Txn, ReturnMsg);
                         break;
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                MessageLog("CMD",e.Message);
+                MessageLog("CMD", e.Message);
                 MessageLog("CMD", e.StackTrace);
                 MessageLog("CMD", Msg.ToString());
             }
