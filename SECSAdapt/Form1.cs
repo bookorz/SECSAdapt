@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,17 +29,17 @@ namespace SECSAdapt
             HostControl = new HostControl(SECS);
           
             //指定使用的容器
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            //this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             //建立NotifyIcon
             this.notifyIcon1.Icon = SECSAdapt.Properties.Resources.share_social_media_icon_127367;
             this.notifyIcon1.Text = "SECS Plug-in";
 
-            this.notifyIcon1.DoubleClick += NotifyIcon1_DoubleClick;
+            //this.notifyIcon1.DoubleClick += NotifyIcon1_DoubleClick;
             //this.WindowState = FormWindowState.Minimized;
             this.notifyIcon1.Visible = true;
         }
 
-        private void NotifyIcon1_DoubleClick(object sender, EventArgs e)
+        private void NotifyIcon1_DoubleClick(object sender, MouseEventArgs e)
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
@@ -160,14 +161,35 @@ namespace SECSAdapt
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
-            this.Hide();
-            this.notifyIcon1.Visible = true;
+            if (!this.notifyIcon1.Visible)
+            {
+                e.Cancel = true;
+                this.Hide();
+                this.notifyIcon1.Visible = true;
+            }
+           
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.notifyIcon1.Visible = false;
+            //this.notifyIcon1.Visible = false;
         }
+
+        private void exit_mu_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void notifyIcon1_MouseUp(object sender, MouseEventArgs e)
+        {
+            //if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            //{
+            //    Type t = typeof(NotifyIcon);
+            //    MethodInfo mi = t.GetMethod("ShowContextMenu", BindingFlags.NonPublic | BindingFlags.Instance);
+            //    mi.Invoke(this.notifyIcon1, null);
+            //}
+        }
+
+    
     }
 }
