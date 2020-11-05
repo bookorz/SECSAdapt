@@ -112,7 +112,7 @@ namespace SECSAdapt
                         string NodeName = restoredObject.Property("NodeName").Value.ToString();
                         string ReportType = restoredObject.Property("ReportType").Value.ToString();
                         string Message = restoredObject.Property("Message").Value.ToString();
-                        _Report.On_TaskJob_Aborted(Task);
+                        _Report.On_TaskJob_Aborted(Task, NodeName, ReportType, Message);
                         break;
                     case "On_Alarm_Happend":
                         //TransferControl.Management.AlarmManagement.AlarmInfo Alarm = JsonConvert.DeserializeObject<TransferControl.Management.AlarmManagement.AlarmInfo>(restoredObject.Property("Alarm").Value.ToString());
