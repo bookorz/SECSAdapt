@@ -190,6 +190,14 @@ namespace SECSAdapt
             //}
         }
 
-    
+        public void On_Alarm_Happen(AlarmManagement.Alarm Alarm)
+        {
+            
+        }
+
+        public void On_TaskJob_Aborted(TaskFlowManagement.CurrentProcessTask Task)
+        {
+            
+        }
     }
 }
